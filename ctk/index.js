@@ -6,7 +6,7 @@ var hostname;
 var port;
 var APIRelativeAddress;
 var statusCode;
-const exampleEndPoint = "permission";
+const exampleEndPoint = "service";
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
@@ -99,7 +99,7 @@ function breakDownURL(URL){
 
 function getURL(){
     
-    rl.question('////////////////////////////////////////////////////////////////////////\nWhat is your full API address omiting the endpoint? example:\nhttp://tm-forum-open-api-reference-implementation.mybluemix.net/usersandroles/v1permission\nbecomes\nhttp://tm-forum-open-api-reference-implementation.mybluemix.net/usersandroles/v1\n>', (answer) => {
+    rl.question('////////////////////////////////////////////////////////////////////////\nWhat is your full API address omiting the endpoint? example:\nhttp://tm-forum-open-api-reference-implementation.mybluemix.net/tmf-api/serviceInventory/v2/service\nbecomes\nhttp://tm-forum-open-api-reference-implementation.mybluemix.net/tmf-api/serviceInventory/v2/\n>', (answer) => {
     DefaultURL = answer;
     rl.close();
     isURLValid(answer);
