@@ -1,18 +1,18 @@
 const readline = require('readline');
 const rp = require('request-promise');
-var DefaultURL = "http://tm-forum-open-api-reference-implementation.mybluemix.net/usersandroles/v1";
+var DefaultURL = "${APIDEFAULTURL}/tmf-api/serviceInventory/v3/";
 var schema;
 var hostname;
 var port;
 var APIRelativeAddress;
 var statusCode;
-const exampleEndPoint = "service";
+const exampleEndPoint = "/service";
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
-console.log("////////////////////////////////////////////////////////////////////////\nWelcome to the Conformance Test Kit for TMF638 ServiceInventory\n");
+console.log("////////////////////////////////////////////////////////////////////////\nWelcome to the Conformance Test Kit for TMF638 ServiceInventory R18 5\n");
 getURL();
 
 
@@ -33,8 +33,7 @@ function isURLValid(triedURL){
         statusCode = jsonString.statusCode;
         if (statusCode == 200){
             console.log("API Found on: " + triedURL + exampleEndPoint);
-            breakDownURL(triedURL);
-            exportEnvironment();
+            exportEnvironment(triedURL);
             runNewman();
         }
         else {
@@ -99,7 +98,11 @@ function breakDownURL(URL){
 
 function getURL(){
     
-    rl.question('////////////////////////////////////////////////////////////////////////\nWhat is your full API address omiting the endpoint? example:\nhttp://tm-forum-open-api-reference-implementation.mybluemix.net/tmf-api/serviceInventory/v2/service\nbecomes\nhttp://tm-forum-open-api-reference-implementation.mybluemix.net/tmf-api/serviceInventory/v2/\n>', (answer) => {
+    rl.question('////////////////////////////////////////////////////////////////////////\n'+
+    'What is your full API address omiting the endpoint? example:\n'+
+    'https://apictk-service-inventory-management-v3-0-0.mybluemix.net/tmf-api/serviceInventory/v3/service\n'+
+    'becomes\n'+
+    'https://apictk-service-inventory-management-v3-0-0.mybluemix.net/tmf-api/serviceInventory/v3\n>', (answer) => {
     DefaultURL = answer;
     rl.close();
     isURLValid(answer);
@@ -108,25 +111,16 @@ function getURL(){
 
 }
 
-function exportEnvironment(){
+function exportEnvironment(url){
 
     var fs = require('fs');
-    var environmentFile = "TMForumR18.0.postman_environment.json";    
+    var environmentFile = "CTK-TMFENV-V3.0.0.postman_environment.json";    
     var content = fs.readFileSync(environmentFile, "utf8");
     var envJson = JSON.parse(content);
-    envJson.name = "TMForumR18.0";
+    envJson.name = "TMForumR18.5";
     envJson.values.forEach(element => {
-        if (element.key == "schema"){
-            element.value = schema;
-        }
-        if (element.key == "host"){
-            element.value = hostname;
-        }
-        if (element.key == "port"){
-            element.value = port;
-        } 
-        if (element.key == "ProductOfferingQualificationAPI"){
-            element.value = "{{schema}}://{{host}}:{{port}}"+APIRelativeAddress;
+        if (element.key == "ServiceInventoryAPI"){
+            element.value = url;
         }
     });
     jsonData = JSON.stringify(envJson);
@@ -139,7 +133,7 @@ function runNewman(){
     var newman = require('newman');
 
     newman.run({
-        collection: require('./CTK-TMF638-ServiceInventory.postman_collection.json'),
+        collection: require('./CTK-TMF638-ServiceInventory-R18-5.postman_collection.json'),
         environment: require('./TMFENV.json'),
         insecure: true,
         reporters: ['html','json'],
